@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 
 class Post(models.Model):
@@ -11,3 +12,8 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    # Django will use this function to find a URL of any specific instance
+    # of the Post.
+    def get_absolute_url(self):
+        return reverse('post-detail', kwargs={'pk': self.pk})

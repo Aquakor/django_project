@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from django.http import HttpResponse
 from .models import Post
 
@@ -18,6 +18,19 @@ class PostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
+
+class PostCreateView(CreateView):
+    model = Post
+    fields = ['title', 'content']
+
+    # Override form_valid method so we can add an author to the Post
+    # before commiting it to the database.
+    def form_valid(self, form):
+        # Take the instance and set the author to the current logged in user.
+        form.instance.author = self.request.user
+        # Run the parent class's form_valid
+        # method and pass the updated argument.
+        return super().form_valid(form)
 
 def about(request):
     return render(request, 'blog/about.html', {'title': 'About'})
